@@ -64,7 +64,18 @@ let participantes = [
 
 const criarNovoParticipante = (participante) => {
   const dataInscricao = dayjs(Date.now()).to(participante.dataInscricao)
-  const dataCheckIn = dayjs(Date.now()).to(participante.dataCheckIn)
+  let dataCheckIn = dayjs(Date.now()).to(participante.dataCheckIn)
+
+  if (participante.dataCheckIn == null) {
+    dataCheckIn = `
+      <button 
+        data-email="${participante.email}"
+        onclick="fazerCheckIn(event)"
+      >
+        Confirmar check-in
+      </button>
+    `
+  }
 
   // ${} faz uma troca
   return `
@@ -102,3 +113,53 @@ const atualizarLista = (participantes) => {
 }
 
 atualizarLista(participantes)
+
+const adicionarParticipante = (event) => {
+  event.preventDefault()
+
+  const formData = new FormData(event.target)
+
+  const participante = {
+    nome: formData.get("nome"),
+    email: formData.get("email"),
+    dataInscricao: new Date(),
+    dataCheckIn: null,
+  }
+
+  //verificar se o participante já existe
+  const participanteExiste = participantes.find(
+    (p) => (p.email = participante.email)
+  )
+
+  if (participanteExiste) {
+    alert("Email já cadastrado")
+    return
+  }
+
+  // adiciona o novo participante e adiciona antes dos outros participantes
+  participantes = [participante, ...participantes]
+  atualizarLista(participantes)
+
+  //limpar o formulario
+  event.target.querySelector('[name="nome"]').value = ""
+  event.target.querySelector('[name="email"]').value = ""
+}
+
+const fazerCheckIn = (event) => {
+  //confirmar se quer o check-in
+  const mensagemConfirmacao = "Tem certeza que deseja fazer o check-in?"
+
+  if (confirm(mensagemConfirmacao) == false) {
+    return // a função para aqui
+  }
+
+  //encontrar o participante na lista
+  const participante = participantes.find(
+    //pega o participante que foi registrado a partir botao
+    (p) => p.email == event.target.dataset.email
+  )
+  // atualizar o check-in do participante
+  participante.dataCheckIn = new Date()
+  // atualizar ele na lista
+  atualizarLista(participantes)
+}
