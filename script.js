@@ -4,7 +4,7 @@ let participantes = [
     nome: "Diego Fernandes",
     email: "diego@gmail.com",
     dataInscricao: new Date(2024, 2, 01, 19, 23),
-    dataCheckIn: new Date(2024, 2, 01, 20, 20),
+    dataCheckIn: null,
   },
   {
     nome: "Mayk Brito",
@@ -117,22 +117,22 @@ atualizarLista(participantes)
 const adicionarParticipante = (event) => {
   event.preventDefault()
 
-  const formData = new FormData(event.target)
+  const dadosDoFormulario = new FormData(event.target)
 
   const participante = {
-    nome: formData.get("nome"),
-    email: formData.get("email"),
+    nome: dadosDoFormulario.get("nome"),
+    email: dadosDoFormulario.get("email"),
     dataInscricao: new Date(),
     dataCheckIn: null,
   }
 
   //verificar se o participante já existe
   const participanteExiste = participantes.find(
-    (p) => (p.email = participante.email)
+    (p) => (p.email == participante.email)
   )
 
   if (participanteExiste) {
-    alert("Email já cadastrado")
+    alert("Email já cadastrado!")
     return
   }
 
